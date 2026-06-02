@@ -1,0 +1,19 @@
+#!/bin/sh
+#
+# 99-system-defaults — Per-device system defaults
+#
+# These settings are safe to run at first boot.
+# Users can modify them via LuCI or CLI.
+#
+# SECURITY NOTE: Passwords are NOT set here.
+# Set root password and WiFi key via LuCI after first boot.
+
+# Set hostname to bt-r320
+uci set system.@system[0].hostname='bt-r320'
+
+# Set timezone to Asia/Shanghai (adjust as needed)
+uci set system.@system[0].timezone='CST-8'
+uci set system.@system[0].tzoff='8'
+
+# Apply settings
+uci commit system

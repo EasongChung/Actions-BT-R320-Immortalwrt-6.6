@@ -1,0 +1,16 @@
+# Build artifacts
+bin/
+dl/
+build.log
+*.log
+*.bin
+*.itb
+*.ext4*
+*.squashfs
+*.tar.gz
+
+# Temp files
+*.swp
+*~
+.DS_Store
+Thumbs.db

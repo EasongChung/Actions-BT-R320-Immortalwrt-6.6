@@ -1,0 +1,14 @@
+#!/bin/bash
+#
+# 01_leds — Runtime LED configuration for filogic boards
+# Installed to: target/linux/mediatek/filogic/base-files/etc/board.d/01_leds
+#
+
+case "$(cmdline_get_string label)" in
+globitel,bt-r320)
+	ucidef_set_led_netdev "wanact" "WANACT" "red:status" "eth0" "rx tx"
+	ucidef_set_led_netdev "wanlink" "WANLINK" "green:status" "eth0" "link"
+	ucidef_set_led_netdev "lanact" "LANACT" "green:status" "eth1" "rx tx"
+	ucidef_set_led_netdev "lanlink" "LANLINK" "blue:status" "eth1" "link"
+	;;
+esac

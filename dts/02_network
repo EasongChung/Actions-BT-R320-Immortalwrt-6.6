@@ -1,0 +1,27 @@
+#!/bin/bash
+#
+# 02_network — Network topology configuration for filogic boards
+# Installed to: target/linux/mediatek/filogic/base-files/etc/board.d/02_network
+#
+
+board=$(board_name)
+
+case "$board" in
+cudy,m3000-v1|\
+cudy,tr3000-256mb-v1|\
+cudy,tr3000-v1|\
+cudy,tr3000-v1-ubootmod|\
+glinet,gl-mt2500|\
+glinet,gl-mt3000|\
+glinet,gl-x3000|\
+glinet,gl-xe3000|\
+openembed,som7981|\
+openwrt,one|\
+globitel,bt-r320)
+	ucidef_set_interfaces_lan_wan eth1 eth0
+	;;
+dlink,aquila-pro-ai-e30-a1|\
+netis,eap930-v1)
+	ucidef_set_interface_lan "lan"
+	;;
+esac

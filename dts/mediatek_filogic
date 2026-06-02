@@ -1,0 +1,32 @@
+#!/bin/sh
+#
+# mediatek_filogic — U-Boot environment tools for MediaTek Filogic boards
+# Installed to: package/boot/uboot-envtools/files/mediatek_filogic
+#
+# Added: globitel,bt-r320 support for eMMC u-boot-env
+
+board=$(board_name)
+
+drv=""
+dev=""
+part=""
+
+case "$board" in
+glinet,gl-mt2500|\
+glinet,gl-mt3000|\
+glinet,gl-mt6000|\
+glinet,gl-x3000|\
+glinet,gl-xe3000|\
+globitel,bt-r320|\
+huasifei,wh3000|\
+nradio,c8-668-gl)
+	drv="mmc"
+	;;
+esac
+
+case "$drv" in
+mmc)
+	bootdev=${BLOCK_MMC_KERN_DEV%%p[0-9]*}
+	ubootenv_add_mmc_default "${bootdev#/dev/}"
+	;;
+esac
