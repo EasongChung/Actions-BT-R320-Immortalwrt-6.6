@@ -1,9 +1,0 @@
-#
-# feeds.conf.default — Package feeds for bt-r320 ImmortalWrt
-#
-
-src-git base https://github.com/immortalwrt/immortalwrt.git;openwrt-24.10
-src-git packages https://github.com/immortalwrt/packages.git;openwrt-24.10
-src-git luci https://github.com/immortalwrt/luci.git;openwrt-24.10
-src-git routing https://github.com/immortalwrt/routing.git;openwrt-24.10
-src-git telephony https://github.com/immortalwrt/telephony.git;openwrt-24.10
