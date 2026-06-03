@@ -17,7 +17,7 @@
 #include <dt-bindings/input/input.h>
 #include <dt-bindings/leds/common.h>
 
-#include "mt7981b.dtsi"
+#include "mt7981.dtsi"
 
 / {
 	model = "Globitel BT-R320";
@@ -72,7 +72,7 @@
 	};
 
 	/*
-	 * GPIO LEDs — BT-R320 has 3 RGB LEDs (red/green/blue)
+	 * GPIO LEDs for BT-R320 status and WiFi indicators
 	 * Combined form white / blue / purple / cyan states.
 	 */
 	gpio-leds {
@@ -203,6 +203,13 @@
 	};
 };
 
+
+	pcie_pins: pcie-pins {
+		 mux {
+			function = "pcie";
+			groups = "pcie_pereset";
+		};
+	};
 /* PWM for status LED */
 &pwm {
 	pinctrl-names = "default";
@@ -331,7 +338,7 @@
 };
 
 /*
- * eMMC — BT-R320 uses eMMC for primary storage (120GB)
+ * eMMC storage layout for BT-R320 primary storage (120GB)
  * GPT partition layout (from user's fdisk output):
  *   p1: u-boot-env  512K  @ 8192
  *   p2: factory      2M   @ 9216
@@ -427,5 +434,11 @@
 
 /* PCIe for M.2 NVMe */
 &pcie {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pcie_pins>;
 	status = "okay";
+};
+
+&sgmiisys0 {
+	/delete-node/ mediatek,pnswap;
 };

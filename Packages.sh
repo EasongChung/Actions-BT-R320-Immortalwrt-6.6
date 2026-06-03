@@ -132,12 +132,12 @@ UPDATE_PACKAGE "luci-app-quickstart" "kiddin9/kwrt-packages" "main" "pkg"
 # ============================================================================
 # Version auto-update
 # ============================================================================
-UPDATE_VERSION "luci-app-lucky"
-UPDATE_VERSION "luci-app-passwall"
-UPDATE_VERSION "luci-app-passwall2"
-UPDATE_VERSION "luci-app-store"
-UPDATE_VERSION "luci-app-openclash"
-UPDATE_VERSION "luci-app-argon-config"
+# UPDATE_VERSION "luci-app-lucky"
+# UPDATE_VERSION "luci-app-passwall"
+# UPDATE_VERSION "luci-app-passwall2"
+# UPDATE_VERSION "luci-app-store"
+# UPDATE_VERSION "luci-app-openclash"
+# UPDATE_VERSION "luci-app-argon-config"
 
 # ============================================================================
 # Pre-load OpenClash cores & geo databases
