@@ -195,6 +195,13 @@
 		};
 	};
 
+	pcie_pins: pcie-pins {
+		mux {
+			function = "pcie";
+			groups = "pcie_pereset";
+		};
+	};
+
 	uart2_pins: uart2-pins {
 		mux {
 			function = "uart";
@@ -203,13 +210,6 @@
 	};
 };
 
-
-	pcie_pins: pcie-pins {
-		 mux {
-			function = "pcie";
-			groups = "pcie_pereset";
-		};
-	};
 /* PWM for status LED */
 &pwm {
 	pinctrl-names = "default";
