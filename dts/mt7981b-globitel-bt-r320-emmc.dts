@@ -26,10 +26,10 @@
 	aliases {
 		ethernet0 = &gmac1;
 		label-mac-device = &gmac0;
-		led-boot = &led_status_white;
+		led-boot = &led_status_red;
 		led-failsafe = &led_status_red;
 		led-running = &led_status_green;
-		led-upgrade = &led_status_green;
+		led-upgrade = &led_status_blue;
 		serial0 = &uart0;
 	};
 
