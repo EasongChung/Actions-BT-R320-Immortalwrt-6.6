@@ -202,6 +202,20 @@
 		};
 	};
 
+	i2c_pins: i2c-pins {
+		mux {
+			function = "i2c";
+			groups = "i2c_0";
+		};
+	};
+
+	spi2_flash_pins: spi2-flash-pins {
+		mux {
+			function = "flash";
+			groups = "spi2", "spi2_cd";
+		};
+	};
+
 	uart2_pins: uart2-pins {
 		mux {
 			function = "uart";
