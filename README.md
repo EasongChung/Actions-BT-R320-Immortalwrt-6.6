@@ -24,7 +24,7 @@
 | 内存 | 1GB DDR4 |
 | 存储 | eMMC 版本 |
 | 无线 | MediaTek MT7976C Wi-Fi 6 |
-| 有线网络 | 1 × 2.5GbE + 多个千兆 LAN 口，具体以设备硬件版本为准 |
+| 有线网络 | 4个千兆口 |
 | 目标系统 | ImmortalWrt 24.10 / Kernel 6.6 |
 
 ## 仓库结构
