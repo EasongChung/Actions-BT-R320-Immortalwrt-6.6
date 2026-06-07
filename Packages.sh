@@ -104,13 +104,13 @@ UPDATE_VERSION() {
 # ============================================================================
 # Proxy & networking packages
 # ============================================================================
-UPDATE_PACKAGE "openclash" "vernesong/OpenClash" "dev" "pkg"
+# UPDATE_PACKAGE "openclash" "vernesong/OpenClash" "dev" "pkg"
 # UPDATE_PACKAGE "passwall" "xiaorouji/openwrt-passwall" "main" "pkg"
 UPDATE_PACKAGE "passwall2" "xiaorouji/openwrt-passwall2" "main" "pkg"
 # UPDATE_PACKAGE "ssr-plus" "fw876/helloworld" "master"
 
 # Utility packages
-UPDATE_PACKAGE "luci-app-tailscale" "asvow/luci-app-tailscale" "main"
+# UPDATE_PACKAGE "luci-app-tailscale" "asvow/luci-app-tailscale" "main"
 
 # Replaced: luci-app-zerotier → easytier (lighter, modern mesh VPN)
 UPDATE_PACKAGE "easytier" "easytier/easytier" "main" "pkg"
@@ -123,8 +123,8 @@ UPDATE_PACKAGE "luci-app-lucky" "shidahuilang/openwrt-package" "Lede" "pkg"
 UPDATE_PACKAGE "lucky" "shidahuilang/openwrt-package" "Lede" "pkg"
 
 # Kiddin9 packages (keep except zerotier)
-UPDATE_PACKAGE "luci-app-npc" "kiddin9/kwrt-packages" "main" "pkg"
-UPDATE_PACKAGE "luci-app-frpc" "kiddin9/kwrt-packages" "main" "pkg"
+# UPDATE_PACKAGE "luci-app-npc" "kiddin9/kwrt-packages" "main" "pkg"
+# UPDATE_PACKAGE "luci-app-frpc" "kiddin9/kwrt-packages" "main" "pkg"
 UPDATE_PACKAGE "luci-theme-argon" "kiddin9/kwrt-packages" "main" "pkg"
 UPDATE_PACKAGE "quickstart" "kiddin9/kwrt-packages" "main" "pkg"
 UPDATE_PACKAGE "luci-app-quickstart" "kiddin9/kwrt-packages" "main" "pkg"
