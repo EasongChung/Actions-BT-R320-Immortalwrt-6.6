@@ -106,28 +106,30 @@ UPDATE_VERSION() {
 # ============================================================================
 # UPDATE_PACKAGE "openclash" "vernesong/OpenClash" "dev" "pkg"
 # UPDATE_PACKAGE "passwall" "xiaorouji/openwrt-passwall" "main" "pkg"
-UPDATE_PACKAGE "passwall2" "xiaorouji/openwrt-passwall2" "main" "pkg"
+UPDATE_PACKAGE "passwall2" "Openwrt-Passwall/openwrt-passwall2" "main" "pkg"
 # UPDATE_PACKAGE "ssr-plus" "fw876/helloworld" "master"
 
 # Utility packages
 # UPDATE_PACKAGE "luci-app-tailscale" "asvow/luci-app-tailscale" "main"
 
 # Replaced: luci-app-zerotier → easytier (lighter, modern mesh VPN)
-UPDATE_PACKAGE "easytier" "easytier/easytier" "main" "pkg"
-UPDATE_PACKAGE "luci-app-easytier" "easytier/easytier" "main" "name"
+UPDATE_PACKAGE "easytier" "EasyTier/luci-app-easytier" "main" "pkg"
+UPDATE_PACKAGE "luci-app-easytier" "EasyTier/luci-app-easytier" "main" "pkg"
 
 # Custom packages from maintained forks
 UPDATE_PACKAGE "luci-app-store" "shidahuilang/openwrt-package" "Immortalwrt" "pkg"
 UPDATE_PACKAGE "luci-app-quickstart" "shidahuilang/openwrt-package" "Immortalwrt" "pkg"
+UPDATE_PACKAGE "quickstart" "shidahuilang/openwrt-package" "Immortalwrt" "pkg"
 UPDATE_PACKAGE "luci-app-lucky" "shidahuilang/openwrt-package" "Lede" "pkg"
 UPDATE_PACKAGE "lucky" "shidahuilang/openwrt-package" "Lede" "pkg"
 
-# Kiddin9 packages (keep except zerotier)
+# Kiddin9 packages disabled: upstream repository is unavailable.
+# build.sh already installs luci-theme-argon from jerrykuku/luci-theme-argon.
 # UPDATE_PACKAGE "luci-app-npc" "kiddin9/kwrt-packages" "main" "pkg"
 # UPDATE_PACKAGE "luci-app-frpc" "kiddin9/kwrt-packages" "main" "pkg"
-UPDATE_PACKAGE "luci-theme-argon" "kiddin9/kwrt-packages" "main" "pkg"
-UPDATE_PACKAGE "quickstart" "kiddin9/kwrt-packages" "main" "pkg"
-UPDATE_PACKAGE "luci-app-quickstart" "kiddin9/kwrt-packages" "main" "pkg"
+# UPDATE_PACKAGE "luci-theme-argon" "kiddin9/kwrt-packages" "main" "pkg"
+# UPDATE_PACKAGE "quickstart" "kiddin9/kwrt-packages" "main" "pkg"
+# UPDATE_PACKAGE "luci-app-quickstart" "kiddin9/kwrt-packages" "main" "pkg"
 
 # ============================================================================
 # Version auto-update
