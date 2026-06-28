@@ -1,15 +1,21 @@
 // SPDX-License-Identifier: GPL-2.0-or-later OR MIT
 
 /*
- * Device tree for Globitel BT-R320 (JDC-F3 / OpenWrt One)
- * Based on upstream openwrt,one DTS with eMMC + NVMe modifications
- * for 120G eMMC storage variant.
+ * Device tree for Globitel BT-R320 eMMC variant.
  *
- * SOC: MediaTek MT7981B (2x Cortex-A53 @ 1.3GHz)
- * RAM: 1GB DDR4
- * Storage: 120GB eMMC + M.2 NVMe
- * WiFi: MediaTek MT7976C (Wi-Fi 6 DBDC)
- * Ethernet: 1x 2.5GbE (WAN via Airoha EN8811H) + 5x 1GbE via MT7531 switch
+ * This file is intentionally aligned with the known-working
+ * Actions-immortalwrt-bt-r320-24.10-237 hardware topology:
+ *   - SoC: MediaTek MT7981B
+ *   - RAM: Nanya DDR4, physically 1GB
+ *   - Switch: MediaTek MT7531AE
+ *   - WiFi: MediaTek MT7976CN
+ *   - Storage: 128GB eMMC
+ *
+ * Notes:
+ *   - Keep the historical 512MB memory declaration for first boot parity
+ *     with the known-working project. The old firmware can still detect 1GB.
+ *   - Do not use OpenWrt One / Airoha EN8811H topology here; BT-R320 uses
+ *     MT7531AE switch.
  */
 
 /dts-v1/;
@@ -21,60 +27,43 @@
 
 / {
 	model = "Globitel BT-R320";
-	compatible = "globitel,bt-r320", "openwrt,one", "mediatek,mt7981";
+	compatible = "bt,r320-emmc", "mediatek,mt7981";
 
 	aliases {
-		ethernet0 = &gmac1;
+		serial0 = &uart0;
 		label-mac-device = &gmac0;
 		led-boot = &led_status_red;
 		led-failsafe = &led_status_red;
 		led-running = &led_status_green;
 		led-upgrade = &led_status_blue;
-		serial0 = &uart0;
 	};
 
 	chosen {
+		bootargs = "root=PARTLABEL=rootfs rootwait rootfstype=squashfs overlayfs=f2fs";
 		stdout-path = "serial0:115200n8";
-		rootdisk = <&mmc_rootdisk>;
 	};
 
 	memory@40000000 {
-		reg = <0 0x40000000 0 0x40000000>;
-		device_type = "memory";
-	};
-
-	reg_3p3v: regulator-3p3v {
-		compatible = "regulator-fixed";
-		regulator-name = "fixed-3.3V";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		regulator-boot-on;
-		regulator-always-on;
-	};
-
-	reg_5v: regulator-5v {
-		compatible = "regulator-fixed";
-		regulator-name = "fixed-5V";
-		regulator-min-microvolt = <5000000>;
-		regulator-max-microvolt = <5000000>;
-		regulator-boot-on;
-		regulator-always-on;
+		reg = <0 0x40000000 0 0x20000000>;
 	};
 
 	gpio-keys {
 		compatible = "gpio-keys";
 
-		reset {
+		button-mesh {
+			label = "mesh";
+			linux,code = <BTN_9>;
+			linux,input-type = <EV_KEY>;
+			gpios = <&pio 0 GPIO_ACTIVE_LOW>;
+		};
+
+		button-reset {
 			label = "reset";
 			linux,code = <KEY_RESTART>;
 			gpios = <&pio 1 GPIO_ACTIVE_LOW>;
 		};
 	};
 
-	/*
-	 * GPIO LEDs for BT-R320 status and WiFi indicators
-	 * Combined form white / blue / purple / cyan states.
-	 */
 	gpio-leds {
 		compatible = "gpio-leds";
 
@@ -94,14 +83,12 @@
 		};
 
 		led-3 {
-			label = "wlan-2g";
 			function = LED_FUNCTION_WLAN_2GHZ;
 			color = <LED_COLOR_ID_GREEN>;
 			gpios = <&pio 34 GPIO_ACTIVE_LOW>;
 		};
 
 		led-4 {
-			label = "wlan-5g";
 			function = LED_FUNCTION_WLAN_5GHZ;
 			color = <LED_COLOR_ID_GREEN>;
 			gpios = <&pio 35 GPIO_ACTIVE_LOW>;
@@ -109,177 +96,76 @@
 	};
 };
 
-/* Ethernet / Switch */
 &eth {
 	status = "okay";
 
 	gmac0: mac@0 {
 		compatible = "mediatek,eth-mac";
 		reg = <0>;
-		phy-handle = <&phy15>;
 		phy-mode = "2500base-x";
-		nvmem-cell-names = "mac-address";
-		nvmem-cells = <&macaddr_factory_24>;
+
+		fixed-link {
+			speed = <2500>;
+			full-duplex;
+			pause;
+		};
 	};
 
 	gmac1: mac@1 {
 		compatible = "mediatek,eth-mac";
 		reg = <1>;
-		phy-mode = "gmii";
-		phy-handle = <&int_gbe_phy>;
-	};
-};
-
-&mdio_bus {
-	phy15: phy@f {
-		reg = <0xf>;
-		airoha,pnswap-rx;
-		interrupt-parent = <&pio>;
-		interrupts = <38 IRQ_TYPE_EDGE_FALLING>;
-		reset-gpios = <&pio 39 GPIO_ACTIVE_LOW>;
-		reset-assert-us = <10000>;
-		reset-deassert-us = <20000>;
 		phy-mode = "2500base-x";
-		full-duplex;
-		pause;
 
-		leds {
-			#address-cells = <1>;
-			#size-cells = <0>;
-			led@0 {
-				reg = <0>;
-				function = LED_FUNCTION_WAN;
-				color = <LED_COLOR_ID_AMBER>;
-			};
-			led@1 {
-				reg = <1>;
-				function = LED_FUNCTION_WAN;
-				color = <LED_COLOR_ID_GREEN>;
-			};
-		};
-	};
-};
-
-/* Crypto acceleration */
-&crypto {
-	status = "okay";
-};
-
-/* Pinmux */
-&pio {
-	spi0_flash_pins: spi0-pins {
-		mux {
-			function = "spi";
-			groups = "spi0", "spi0_wp_hold";
+		fixed-link {
+			speed = <2500>;
+			full-duplex;
+			pause;
 		};
 	};
 
-	mmc0_pins_default: mmc0-pins-default {
-		mux {
-			function = "flash";
-			groups = "emmc_45";
-		};
-	};
+	mdio: mdio-bus {
+		#address-cells = <1>;
+		#size-cells = <0>;
 
-	mmc0_pins_uhs: mmc0-pins-uhs {
-		mux {
-			function = "flash";
-			groups = "emmc_45";
-		};
-	};
+		switch@0 {
+			compatible = "mediatek,mt7531";
+			reg = <31>;
+			reset-gpios = <&pio 39 GPIO_ACTIVE_LOW>;
 
-	pwm_pins: pwm-pins {
-		mux {
-			function = "pwm";
-			groups = "pwm0_0", "pwm1_1";
-		};
-	};
+			ports {
+				#address-cells = <1>;
+				#size-cells = <0>;
 
-	pcie_pins: pcie-pins {
-		mux {
-			function = "pcie";
-			groups = "pcie_pereset";
-		};
-	};
+				port@1 {
+					reg = <1>;
+					label = "lan1";
+				};
 
-	i2c_pins: i2c-pins {
-		mux {
-			function = "i2c";
-			groups = "i2c_0";
-		};
-	};
+				port@2 {
+					reg = <2>;
+					label = "lan2";
+				};
 
-	spi2_flash_pins: spi2-flash-pins {
-		mux {
-			function = "flash";
-			groups = "spi2", "spi2_cd";
-		};
-	};
+				port@3 {
+					reg = <3>;
+					label = "lan3";
+				};
 
-	uart2_pins: uart2-pins {
-		mux {
-			function = "uart";
-			groups = "uart2_0_tx_rx";
-		};
-	};
-};
+				port@4 {
+					reg = <4>;
+					label = "wan";
+				};
 
-/* PWM for status LED */
-&pwm {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pwm_pins>;
-	status = "okay";
-};
+				port@6 {
+					reg = <6>;
+					label = "cpu";
+					ethernet = <&gmac0>;
+					phy-mode = "2500base-x";
 
-/* I2C for RTC */
-&i2c0 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&i2c_pins>;
-	status = "okay";
-
-	rtc@51 {
-		compatible = "nxp,pcf8563";
-		reg = <0x51>;
-	};
-};
-
-/* SPI NAND (stock bootloader/FIP area) */
-&spi0 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&spi0_flash_pins>;
-	#address-cells = <1>;
-	#size-cells = <0>;
-	status = "okay";
-
-	flash@0 {
-		compatible = "spi-nand";
-		reg = <0>;
-		spi-max-frequency = <52000000>;
-		spi-cal-enable;
-		spi-cal-mode = "read-data";
-		spi-cal-datalen = <7>;
-		spi-cal-data = /bits/ 8 <0x53 0x50 0x49 0x4E 0x41 0x4E 0x44>;
-		spi-cal-addrlen = <5>;
-		spi-cal-addr = /bits/ 32 <0x0 0x0 0x0 0x0 0x0>;
-
-		partitions {
-			compatible = "fixed-partitions";
-			#address-cells = <1>;
-			#size-cells = <1>;
-
-			partition@0 {
-				label = "bl2";
-				reg = <0x0 0x100000>;
-				read-only;
-			};
-
-			partition@580000 {
-				label = "ubi";
-				reg = <0x100000 0xFF00000>;
-				compatible = "linux,ubi";
-				volumes {
-					ubi_fit_volume: ubi-volume-fit {
-						volname = "fit";
+					fixed-link {
+						speed = <2500>;
+						full-duplex;
+						pause;
 					};
 				};
 			};
@@ -287,81 +173,6 @@
 	};
 };
 
-/* SPI1 unused (available for mods) */
-&spi1 {
-	pinctrl-names = "default";
-	status = "okay";
-};
-
-/* SPI NOR (recovery / fallback) */
-&spi2 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&spi2_flash_pins>;
-	#address-cells = <1>;
-	#size-cells = <0>;
-	status = "okay";
-
-	flash@0 {
-		compatible = "jedec,spi-nor";
-		reg = <0>;
-		spi-max-frequency = <52000000>;
-
-		partitions {
-			compatible = "fixed-partitions";
-			#address-cells = <1>;
-			#size-cells = <1>;
-
-			partition@0 {
-				label = "bl2-nor";
-				reg = <0x00000 0x40000>;
-			};
-			partition@40000 {
-				label = "factory";
-				reg = <0x40000 0xc0000>;
-				read-only;
-
-				nvmem-layout {
-					compatible = "fixed-layout";
-					#address-cells = <1>;
-					#size-cells = <1>;
-
-					eeprom_factory_0: eeprom@0 {
-						reg = <0x0 0x1000>;
-					};
-					macaddr_factory_4: macaddr@4 {
-						reg = <0x4 0x6>;
-						compatible = "mac-base";
-						#nvmem-cell-cells = <1>;
-					};
-					macaddr_factory_24: macaddr@24 {
-						reg = <0x24 0x6>;
-						compatible = "mac-base";
-					};
-				};
-			};
-			partition@100000 {
-				label = "fip-nor";
-				reg = <0x100000 0x80000>;
-			};
-			partition@180000 {
-				label = "recovery";
-				reg = <0x180000 0xc80000>;
-			};
-		};
-	};
-};
-
-/*
- * eMMC storage layout for BT-R320 primary storage (120GB)
- * GPT partition layout (from user's fdisk output):
- *   p1: u-boot-env  512K  @ 8192
- *   p2: factory      2M   @ 9216
- *   p3: fip          2M   @ 13312
- *   p4: kernel      32M   @ 17408
- *   p5: rootfs       1G   @ 82944
- *   p6: data      109.3G  @ 2180096
- *   p7: swap       6.7G   @ 231294976
- */
 &mmc0 {
 	bus-width = <8>;
 	cap-mmc-highspeed;
@@ -383,76 +194,70 @@
 			compatible = "block-device";
 
 			partitions {
-				compatible = "partitions";
-				#address-cells = <1>;
-				#size-cells = <1>;
+				block-partition-factory {
+					partname = "factory";
 
-				mmc_rootdisk: partition@5 {
-					label = "rootfs";
-					reg = <5>;
+					nvmem-layout {
+						compatible = "fixed-layout";
+						#address-cells = <1>;
+						#size-cells = <1>;
+
+						eeprom_factory_0: eeprom@0 {
+							reg = <0x0 0x1000>;
+						};
+
+						macaddr_factory_4: macaddr@4 {
+							compatible = "mac-base";
+							reg = <0x4 0x6>;
+							#nvmem-cell-cells = <1>;
+						};
+					};
 				};
 			};
 		};
 	};
 };
 
-/* UART */
+&pio {
+	mmc0_pins_default: mmc0-pins-default {
+		mux {
+			function = "flash";
+			groups = "emmc_45";
+		};
+	};
+
+	mmc0_pins_uhs: mmc0-pins-uhs {
+		mux {
+			function = "flash";
+			groups = "emmc_45";
+		};
+	};
+};
+
 &uart0 {
 	status = "okay";
 };
 
-&uart2 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&uart2_pins>;
-	status = "okay";
-};
-
-/* Watchdog */
 &watchdog {
 	status = "okay";
 };
 
-/* USB */
 &usb_phy {
 	status = "okay";
 };
 
 &xhci {
-	phys = <&u2port0 PHY_TYPE_USB2>;
-	vusb33-supply = <&reg_3p3v>;
-	vbus-supply = <&reg_5v>;
-	mediatek,u3p-dis-msk = <0x01>;
 	status = "okay";
 };
 
-/* WiFi */
 &wifi {
-	#address-cells = <1>;
-	#size-cells = <0>;
 	nvmem-cells = <&eeprom_factory_0>;
 	nvmem-cell-names = "eeprom";
 	status = "okay";
 
-	band@0 {
-		reg = <0>;
-		nvmem-cells = <&macaddr_factory_4 0>;
-		nvmem-cell-names = "mac-address";
-	};
-
 	band@1 {
 		reg = <1>;
-		nvmem-cells = <&macaddr_factory_4 7>;
+		nvmem-cells = <&macaddr_factory_4 1>;
 		nvmem-cell-names = "mac-address";
 	};
-};
-
-/* PCIe for M.2 NVMe */
-&pcie {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pcie_pins>;
-	status = "okay";
-};
-
-&sgmiisys0 {
-	/delete-node/ mediatek,pnswap;
 };

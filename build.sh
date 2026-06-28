@@ -33,25 +33,25 @@ echo "[OK] filogic.mk appended"
 patch_file \
   "target/linux/mediatek/filogic/base-files/etc/board.d/01_leds" \
   "openwrt,one)" \
-  $'globitel,bt-r320)\n\tucidef_set_led_netdev "wanact" "WANACT" "red:status" "eth0" "rx tx"\n\tucidef_set_led_netdev "wanlink" "WANLINK" "green:status" "eth0" "link"\n\tucidef_set_led_netdev "lanact" "LANACT" "green:status" "eth1" "rx tx"\n\tucidef_set_led_netdev "lanlink" "LANLINK" "blue:status" "eth1" "link"\n\t;;\n'
+  $'bt,r320-emmc)\n\tucidef_set_led_netdev "wanact" "WANACT" "red:status" "wan" "rx tx"\n\tucidef_set_led_netdev "wanlink" "WANLINK" "green:status" "wan" "link"\n\tucidef_set_led_netdev "lanact" "LANACT" "green:status" "lan1" "rx tx"\n\tucidef_set_led_netdev "lanlink" "LANLINK" "blue:status" "lan1" "link"\n\t;;\n'
 echo "[OK] 01_leds patched"
 
 patch_file \
   "target/linux/mediatek/filogic/base-files/etc/board.d/02_network" \
   $'openwrt,one|\\\n' \
-  $'globitel,bt-r320|\\\n'
+  $'bt,r320-emmc)\n\tucidef_set_interfaces_lan_wan "lan1 lan2 lan3" "wan"\n\t;;\n'
 echo "[OK] 02_network patched"
 
 patch_file \
   "target/linux/mediatek/filogic/base-files/lib/upgrade/platform.sh" \
   $'openwrt,one|\\\n' \
-  $'\tglobitel,bt-r320|\\\n'
+  $'\tbt,r320-emmc|\\\n'
 echo "[OK] platform.sh patched"
 
 patch_file \
   "package/boot/uboot-envtools/files/mediatek_filogic" \
-  $'bt,r320|\\\n' \
-  $'globitel,bt-r320|\\\n'
+  $'glinet,gl-mt2500|\\\n' \
+  $'bt,r320-emmc|\\\n'
 echo "[OK] mediatek_filogic patched"
 
 echo ""
