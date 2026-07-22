@@ -190,3 +190,4 @@ dts/mt7981b-globitel-bt-r320-emmc.dts
 - [padavanonly/immortalwrt-mt798x-6.6](https://github.com/padavanonly/immortalwrt-mt798x-6.6)
 - [P3TERX Actions-OpenWrt](https://github.com/P3TERX/Actions-OpenWrt)
 - OpenWrt / ImmortalWrt 社区贡献者
+- 维云模型开发平台 https://vsllm.com
